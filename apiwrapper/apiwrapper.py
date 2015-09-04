@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-03 15:11:32
+# @Last Modified time: 2015-09-04 09:59:46
 
 import time
 import requests
@@ -28,6 +28,10 @@ def configure_logger(log_level=logging.DEBUG):
 
 log = configure_logger()
 
+class ExceededRetries(Exception):
+
+    """Is thrown when allowed number of polls were performed but response is not complete yet."""
+    pass
 
 class EmptyResponse(Exception):
 
