@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-04 09:59:46
+# @Last Modified time: 2015-09-05 10:09:49
 
 import time
 import requests
@@ -70,7 +70,7 @@ class APIWrapper(object):
             log.debug(e)
             raise InvalidResponse
 
-    def make_request(self, service_url, method='get', headers=None, data=None, callback=None, errors=STRICT, **params):
+    def make_request(self, url, method='get', headers=None, data=None, callback=None, errors=STRICT, **params):
         error_modes = (STRICT, GRACEFUL, IGNORE)
         error_mode = errors or GRACEFUL
         if error_mode.lower() not in error_modes:
@@ -83,7 +83,7 @@ class APIWrapper(object):
         request = getattr(requests, method.lower())
 
         try:
-            r = request(service_url, headers=headers, data=data, params=params)
+            r = request(url, headers=headers, data=data, params=params)
             log.debug('* Request URL: %s' % r.url)
             log.debug('* Request method: %s' % method)
             log.debug('* Request query params: %s' % params)
@@ -95,10 +95,10 @@ class APIWrapper(object):
         except ConnectionError as ex:
             raise Exception
 
-    def poll_session(self, poll_url, initial_delay=2, delay=1, tries=20, errors=STRICT, is_complete_callback=None, **params):
+    def poll(self, url, initial_delay=2, delay=1, tries=20, errors=STRICT, is_complete_callback=None, **params):
         """
         Poll the URL
-        :param poll_url - URL to poll, should be returned by 'create_session' call
+        :param url - URL to poll, should be returned by 'create_session' call
         :param initial_delay - specifies how many seconds to wait before the first poll
         :param delay - specifies how many seconds to wait between the polls
         :param tries - number of polls to perform
@@ -112,7 +112,7 @@ class APIWrapper(object):
             is_complete_callback = self._default_poll_callback
 
         for n in range(tries):
-            poll_response = self.make_request(poll_url, headers=self._headers(),
+            poll_response = self.make_request(url, headers=self._headers(),
                                               errors=errors, **params)
 
             if is_complete_callback(poll_response):
