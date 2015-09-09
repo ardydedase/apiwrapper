@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-05 10:09:49
+# @Last Modified time: 2015-09-09 23:40:30
 
 import time
 import requests
@@ -11,6 +11,12 @@ import logging
 import sys
 
 from requests.exceptions import ConnectionError
+
+try:
+    import lxml.etree as etree
+except ImportError:
+    import xml.etree.ElementTree as etree
+
 
 def configure_logger(log_level=logging.DEBUG):
     logger = logging.getLogger(__name__)
@@ -28,10 +34,12 @@ def configure_logger(log_level=logging.DEBUG):
 
 log = configure_logger()
 
+
 class ExceededRetries(Exception):
 
     """Is thrown when allowed number of polls were performed but response is not complete yet."""
     pass
+
 
 class EmptyResponse(Exception):
 
@@ -61,16 +69,41 @@ STRICT, GRACEFUL, IGNORE = 'strict', 'graceful', 'ignore'
 
 class APIWrapper(object):
 
-    def _default_resp_callback(self, resp, **params):
+    def __init__(self, response_format='json'):
+        self.response_format = response_format
 
-        log.debug("resp: %s" % resp)
+    def _default_resp_callback(self, resp):
+        if not resp or not resp.content:
+            raise EmptyResponse('Response has no content.')
+
         try:
-            return resp.json()
-        except ValueError as e:
-            log.debug(e)
-            raise InvalidResponse
+            parsed_resp = self._parse_resp(resp, self.response_format)
+        except (ValueError, SyntaxError):
+            raise ValueError('Invalid %s in response: %s...' %
+                             (self.response_format.upper(), resp.content[:100]))
+
+        return parsed_resp
 
     def make_request(self, url, method='get', headers=None, data=None, callback=None, errors=STRICT, **params):
+        """
+        Reusable method for performing requests.
+
+        :param url - URL to request
+        :param method - request method, default is 'get'
+        :param headers - request headers
+        :param data - post data
+        :param callback - callback to be applied to response,
+                          default callback will parse response as json object.
+        :param errors - specifies communication errors handling mode, possible values are:
+                         * strict (default) - throw an error as soon as one occurred
+                         * graceful - ignore certain errors, e.g. EmptyResponse
+                         * ignore - ignore all errors and return a result in any case.
+                                    NOTE that it DOES NOT mean that no exceptions can be
+                                    raised from this method, it mostly ignores communication
+                                    related errors.
+                         * None or empty string equals to default
+        :param params - additional query parameters for request
+        """
         error_modes = (STRICT, GRACEFUL, IGNORE)
         error_mode = errors or GRACEFUL
         if error_mode.lower() not in error_modes:
@@ -81,19 +114,94 @@ class APIWrapper(object):
             callback = self._default_resp_callback
 
         request = getattr(requests, method.lower())
+        log.debug('* Request URL: %s' % url)
+        log.debug('* Request method: %s' % method)
+        log.debug('* Request query params: %s' % params)
+        log.debug('* Request headers: %s' % headers)
+
+        r = request(url, headers=headers, data=data, params=params)
+
+        log.debug('* r.url: %s' % r.url)
 
         try:
-            r = request(url, headers=headers, data=data, params=params)
-            log.debug('* Request URL: %s' % r.url)
-            log.debug('* Request method: %s' % method)
-            log.debug('* Request query params: %s' % params)
-            log.debug('* Request headers: %s' % headers)
+            r.raise_for_status()
+            return callback(r)
+        except Exception as e:
+            return self._with_error_handling(r, e, error_mode, self.response_format)
+
+    def _headers(self):
+        return {'Accept': 'application/%s' % self.response_format}
+
+    @staticmethod
+    def _parse_resp(resp, response_format):
+        resp.parsed = etree.fromstring(
+            resp.content) if response_format == 'xml' else resp.json()
+        return resp
+
+    @staticmethod
+    def _with_error_handling(resp, error, mode, response_format):
+        """
+        Static method for error handling.
+
+        :param resp - API response
+        :param error - Error thrown
+        :param mode - Error mode
+        :param response_format - XML or json
+        """
+        def safe_parse(r):
             try:
-                return callback(r, **params)
-            except TypeError:
-                raise MissingParameter
-        except ConnectionError as ex:
-            raise Exception
+                return APIWrapper._parse_resp(r, response_format)
+            except (ValueError, SyntaxError) as ex:
+                log.error(ex)
+                r.parsed = None
+                return r
+
+        if isinstance(error, requests.HTTPError):
+            if resp.status_code == 400:
+                # It means that request parameters were rejected by the server,
+                # so we need to enrich standard error message with 'ValidationErrors'
+                # from the response
+                resp = safe_parse(resp)
+                if resp.parsed is not None:
+                    parsed_resp = resp.parsed
+                    messages = []
+                    if response_format == 'xml' and parsed_resp.find('./ValidationErrors') is not None:
+                        messages = [e.find('./Message').text
+                                    for e in parsed_resp.findall('./ValidationErrors/ValidationErrorDto')]
+                    elif response_format == 'json' and 'ValidationErrors' in parsed_resp:
+                        messages = [e['Message']
+                                    for e in parsed_resp['ValidationErrors']]
+                    error = requests.HTTPError(
+                        '%s: %s' % (error, '\n\t'.join(messages)), response=resp)
+            elif resp.status_code == 429:
+                error = requests.HTTPError('%sToo many requests in the last minute.' % error,
+                                           response=resp)
+
+        if STRICT == mode:
+            raise error
+        elif GRACEFUL == mode:
+            if isinstance(error, EmptyResponse):
+                # Empty response is returned by the API occasionally,
+                # in this case it makes sense to ignore it and retry.
+                log.warning(error)
+                resp.parsed = None
+                return resp
+
+            elif isinstance(error, requests.HTTPError):
+                # Ignoring 'Too many requests' error,
+                # since subsequent retries will come after a delay.
+                if resp.status_code == 429:    # Too many requests
+                    log.warning(error)
+                    return safe_parse(resp)
+                else:
+                    raise error
+            else:
+                raise error
+        else:
+            # ignore everything, just log it and return whatever response we
+            # have
+            log.error(error)
+            return safe_parse(resp)
 
     def poll(self, url, initial_delay=2, delay=1, tries=20, errors=STRICT, is_complete_callback=None, **params):
         """

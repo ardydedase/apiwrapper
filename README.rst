@@ -16,15 +16,7 @@ Simple API Wrapper
 Overview
 --------
 
-Recently noticed a pattern and repeated pieces of code in Python API wrappers that I've worked on. A separate Python package will minimize code duplication and encourage de-coupling of logic from the API request functions.
-
-
-Features
---------
-
-* Simple and straightforward.
-* Can be used as a parent class or as a helper class.
-
+Recently noticed a pattern and repeated pieces of code in Python API wrappers for simple requests and polling. A separate Python package will minimize code duplication and encourage de-coupling of logic from the API request functions.
 
 Installation
 ------------
@@ -40,26 +32,22 @@ Or, if you have virtualenvwrapper installed::
 
 Getting started
 ---------------
-	
-	# as a helper class
-	from apiwrapper import APIWrapper
+    
+    # as a helper class
+    from apiwrapper import APIWrapper
 
-	my_api = APIWrapper()
-	url = 'https://api.github.com/users/ardydedase/repos'
-	resp = my_api.make_request(url=url)
-	print(resp)
+    my_api = APIWrapper()
+    url = 'https://api.github.com/users/ardydedase/repos'
+    resp = my_api.make_request(url=url)
+    print(resp)
 
-	# as a parent class
-	from apiwrapper import APIWrapper
+    # as a parent class
+    from apiwrapper import APIWrapper
 
-	class GithubAPI(APIWrapper):
-		def get_repos(self, username):
-			"""
-			Uses `make_request` method				
-			"""
-			url = "https://api.github.com/users/{username}/repos".format(username=username)
-			return self.make_request(url, method='get', headers=None, data=None, callback=None)
-
-
-
-
+    class GithubAPI(APIWrapper):
+        def get_repos(self, username):
+            """
+            Uses `make_request` method              
+            """
+            url = "https://api.github.com/users/{username}/repos".format(username=username)
+            return self.make_request(url, method='get', headers=None, data=None, callback=None)
