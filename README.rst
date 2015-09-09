@@ -23,13 +23,9 @@ Installation
 
 At the command line::
 
-.. code:: bash
-
     $ easy_install apiwrapper
 
 Or, if you have virtualenvwrapper installed::
-
-.. code:: bash
 
     $ mkvirtualenv apiwrapper
     $ pip install apiwrapper
