@@ -1,6 +1,6 @@
-===============================
-API Wrapper
-===============================
+=================================
+API Wrapper (Ongoing development)
+=================================
 
 .. image:: https://img.shields.io/travis/ardydedase/apiwrapper.svg
         :target: https://travis-ci.org/ardydedase/apiwrapper
@@ -30,7 +30,7 @@ Or, if you have virtualenvwrapper installed::
     $ mkvirtualenv apiwrapper
     $ pip install apiwrapper
 
-Getting started
+Getting started 
 ---------------
     
     # as a helper class
