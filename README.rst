@@ -32,6 +32,8 @@ Or, if you have virtualenvwrapper installed::
 
 Getting started 
 ---------------
+
+.. code:: python
     
     # as a helper class
     from apiwrapper import APIWrapper
