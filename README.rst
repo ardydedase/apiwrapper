@@ -44,8 +44,6 @@ Getting started
     print(resp)
 
     # as a parent class
-    from apiwrapper import APIWrapper
-
     class GithubAPI(APIWrapper):
         def get_repos(self, username):
             """
