@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-09 23:40:54
+# @Last Modified time: 2015-09-13 21:03:32
 
 """
 test_apiwrapper
@@ -29,6 +29,18 @@ class TestApiWrapper(unittest.TestCase):
         service_url = "{api_base_url}/apiservices/reference/v1.0/countries/en-GB".format(
             api_base_url=self.api_base_url)
         resp = api.make_request(url=service_url, apiKey=self.api_key).parsed
+        self.assertTrue('Countries' in resp)
+
+    def test_callback(self):
+        def mycallback(resp):
+            print("resp from callback: %s" % resp)
+            return resp.json()
+
+        api = APIWrapper()
+        service_url = "{api_base_url}/apiservices/reference/v1.0/countries/en-GB".format(
+            api_base_url=self.api_base_url)
+        resp = api.make_request(
+            url=service_url, apiKey=self.api_key, callback=mycallback)
         self.assertTrue('Countries' in resp)
 
     def tearDown(self):
