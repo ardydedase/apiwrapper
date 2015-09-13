@@ -7,13 +7,9 @@ Basic Usage
 
 To use API Wrapper in a project::
 
-.. code-block:: python
-
     from apiwrapper import APIWrapper
 
 Use it as a helper::
-
-.. code-block:: python
 
     my_api = APIWrapper()
     url = 'https://api.github.com/users/ardydedase/repos'
@@ -21,8 +17,6 @@ Use it as a helper::
     print(resp)
 
 Use it as a parent class::
-
-.. code-block:: python
     
     class GithubAPI(APIWrapper):
         def get_repos(self, username):
@@ -40,8 +34,6 @@ Polling
 - TODO
 
 `callback` parameter in `poll` method. Defines the conditions that determines if the polling is complete. Should return a boolean::
-
-.. code-block:: python
 
     class TestPoller(APIWrapper):
         def _my_poll_callback(self, poll_resp):
@@ -62,8 +54,6 @@ Response callbacks
 ~~~~~~~~~~~~~~~~~~
 
 `callback` parameter in `make_request` method::
-
-.. code-block:: python
 
     class GithubAPI(APIWrapper):
         def _my_callback(self, resp):
