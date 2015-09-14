@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-09 23:40:30
+# @Last Modified time: 2015-09-14 16:58:00
 
 import time
 import requests
@@ -37,7 +37,8 @@ log = configure_logger()
 
 class ExceededRetries(Exception):
 
-    """Is thrown when allowed number of polls were performed but response is not complete yet."""
+    """Is thrown when allowed number of polls were
+     performed but response is not complete yet."""
     pass
 
 
@@ -80,11 +81,12 @@ class APIWrapper(object):
             parsed_resp = self._parse_resp(resp, self.response_format)
         except (ValueError, SyntaxError):
             raise ValueError('Invalid %s in response: %s...' %
-                             (self.response_format.upper(), resp.content[:100]))
+                             (self.response_format.upper(),
+                              resp.content[:100]))
 
         return parsed_resp
 
-    def make_request(self, url, method='get', headers=None, data=None, callback=None, errors=STRICT, **params):
+    def make_request(self, url, method='get', headers=None, data=None, callback=None, errors=STRICT, verify=False, **params):
         """
         Reusable method for performing requests.
 
@@ -119,7 +121,8 @@ class APIWrapper(object):
         log.debug('* Request query params: %s' % params)
         log.debug('* Request headers: %s' % headers)
 
-        r = request(url, headers=headers, data=data, params=params)
+        r = request(
+            url, headers=headers, data=data, verify=verify, params=params)
 
         log.debug('* r.url: %s' % r.url)
 
