@@ -1,5 +1,5 @@
 =================================
-API Wrapper (Ongoing development)
+API Wrapper
 =================================
 
 .. image:: https://img.shields.io/travis/ardydedase/apiwrapper.svg
@@ -51,3 +51,8 @@ Getting started
             """
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=None)
+
+Advanced usage
+---------------
+
+Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html

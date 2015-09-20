@@ -16,7 +16,7 @@ Use it as a helper::
     resp = my_api.make_request(url=url)
     print(resp)
 
-Use it as a parent class::
+Use it as a parent class.
     
     class GithubAPI(APIWrapper):
         def get_repos(self, username):
