@@ -16,7 +16,7 @@ Use it as a helper::
     resp = my_api.make_request(url=url)
     print(resp)
 
-Use it as a parent class.
+Use it as a parent class::
     
     class GithubAPI(APIWrapper):
         def get_repos(self, username):
@@ -131,8 +131,10 @@ Notice that we are passing `_is_poll_complete_callback` as an argument to the `i
         return self.poll(service_url, errors=errors, is_poll_complete_callback=self._is_poll_complete_callback)
 
 
-Now that the `Flights` class is ready. The `get_result` method can be called as follows::
+Now that the `Flights` class is ready. The `get_result` method can be called as follows:
     
+.. code:: python
+
         from datetime import datetime, timedelta
 
         datetime_format = '%Y-%m-%d'
