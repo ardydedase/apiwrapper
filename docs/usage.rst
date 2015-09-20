@@ -31,11 +31,11 @@ Polling
 
 APIWrapper's built-in polling method makes it convenient to declare polling methods and calls. Its flexibility allows a number of options including switching between JSON and XML response types.
 
-In this `poll` method example, let's use Skyscanner's API::
+In this `poll` method example, let's use Skyscanner's API.
 
 Let's start by importing `APIWrapper` class and all the error modes 
-available in the apiwrapper package:
-
+available in the apiwrapper package::
+    
     from apiwrapper import (
         APIWrapper,
         STRICT,
@@ -46,7 +46,7 @@ Next will be to declare the `Flights` class that will inherit
 our `APIWrapper` parent class. 
 The parent APIWrapper class is initizialized with `response_format='json'`.
 The `api_key` is a private property so we don't have to pass 
-it as an argument every time we call `make_request`.
+it as an argument every time we call `make_request`::
 
     class Flights(APIWrapper):
         """
@@ -62,7 +62,7 @@ it as an argument every time we call `make_request`.
             self.api_key = api_key
             super(Flights, self).__init__(response_format='json')
 
-Wrap the `make_request` method from `APIWrapper` and inject the `apikey` only if it is not available in the request url.
+Wrap the `make_request` method from `APIWrapper` and inject the `apikey` only if it is not available in the request url::
 
     def make_request(self, url, method='get', headers=None,
                      data=None, callback=None, errors=STRICT,
@@ -79,7 +79,7 @@ Wrap the `make_request` method from `APIWrapper` and inject the `apikey` only if
                                                  data, callback, errors,
                                                  verify, **params)
 
-The `create_session` method prepares the API's polling session and returns the polling url `poll_url`. This method uses the `make_request` method declared above. It also makes use of the  `_headers()` method from `APIWrapper`.
+The `create_session` method prepares the API's polling session and returns the polling url `poll_url`. This method uses the `make_request` method declared above. It also makes use of the  `_headers()` method from `APIWrapper`::
 
     def create_session(self, **params):
         """
@@ -99,7 +99,7 @@ The `create_session` method prepares the API's polling session and returns the p
 
 This boolean method `is_poll_complete_callback` will be passed as a callback parameter in the `APIWrapper.poll` method call. 
 `is_poll_complete_callback` will receive the `poll` response from `poll` method as a parameter.
-This method will then use the `poll_resp` value to check whether the polling is complete or not and returns a boolean.
+This method will then use the `poll_resp` value to check whether the polling is complete or not and returns a boolean::
 
     def _is_poll_complete_callback(self, poll_resp):
         """
@@ -120,7 +120,7 @@ This method will then use the `poll_resp` value to check whether the polling is 
         return status in success_list
 
 And lastly, the `get_result` method polls the API using the URL that was returned from `create_session`. 
-Notice that we are passing `_is_poll_complete_callback` as an argument to the `is_poll_complete_callback` parameter in the `poll` method. After the poll is complete, the `get_result` method will return the flight search result.
+Notice that we are passing `_is_poll_complete_callback` as an argument to the `is_poll_complete_callback` parameter in the `poll` method. After the poll is complete, the `get_result` method will return the flight search result::
 
     def get_result(self, errors=STRICT, **params):
         """
