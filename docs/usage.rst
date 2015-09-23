@@ -13,7 +13,7 @@ Use it as a helper::
 
     my_api = APIWrapper()
     url = 'https://api.github.com/users/ardydedase/repos'
-    resp = my_api.make_request(url=url)
+    resp = my_api.make_request(url, method='get', headers=None, data=None, callback=None).parsed
     print(resp)
 
 Use it as a parent class::
@@ -174,6 +174,4 @@ Response callbacks
             """
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=self._my_callback)
-    
-
-
+            
