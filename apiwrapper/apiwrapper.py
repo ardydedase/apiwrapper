@@ -3,7 +3,7 @@
 # @Author: ardydedase
 # @Date:   2015-08-30 11:19:30
 # @Last Modified by:   ardydedase
-# @Last Modified time: 2015-09-14 16:58:00
+# @Last Modified time: 2015-09-24 19:36:51
 
 import time
 import requests
@@ -86,22 +86,27 @@ class APIWrapper(object):
 
         return parsed_resp
 
-    def make_request(self, url, method='get', headers=None, data=None, callback=None, errors=STRICT, verify=False, **params):
+    def make_request(self, url, method='get', headers=None, data=None,
+                     callback=None, errors=STRICT, verify=False, **params):
         """
         Reusable method for performing requests.
-
         :param url - URL to request
         :param method - request method, default is 'get'
         :param headers - request headers
         :param data - post data
         :param callback - callback to be applied to response,
                           default callback will parse response as json object.
-        :param errors - specifies communication errors handling mode, possible values are:
-                         * strict (default) - throw an error as soon as one occurred
+        :param errors - specifies communication errors handling mode, possible
+                        values are:
+                         * strict (default) - throw an error as soon as one
+                            occurred
                          * graceful - ignore certain errors, e.g. EmptyResponse
-                         * ignore - ignore all errors and return a result in any case.
-                                    NOTE that it DOES NOT mean that no exceptions can be
-                                    raised from this method, it mostly ignores communication
+                         * ignore - ignore all errors and return a result in
+                                    any case.
+                                    NOTE that it DOES NOT mean that no
+                                    exceptions can be
+                                    raised from this method, it mostly ignores
+                                    communication
                                     related errors.
                          * None or empty string equals to default
         :param params - additional query parameters for request
@@ -110,7 +115,8 @@ class APIWrapper(object):
         error_mode = errors or GRACEFUL
         if error_mode.lower() not in error_modes:
             raise ValueError(
-                'Possible values for errors argument are: %s' % ', '.join(error_modes))
+                'Possible values for errors argument are: %s'
+                % ','.join(error_modes))
 
         if callback is None:
             callback = self._default_resp_callback
@@ -130,7 +136,8 @@ class APIWrapper(object):
             r.raise_for_status()
             return callback(r)
         except Exception as e:
-            return self._with_error_handling(r, e, error_mode, self.response_format)
+            return self._with_error_handling(r, e,
+                                             error_mode, self.response_format)
 
     def _headers(self):
         return {'Accept': 'application/%s' % self.response_format}
@@ -162,13 +169,15 @@ class APIWrapper(object):
         if isinstance(error, requests.HTTPError):
             if resp.status_code == 400:
                 # It means that request parameters were rejected by the server,
-                # so we need to enrich standard error message with 'ValidationErrors'
+                # so we need to enrich standard error message
+                # with 'ValidationErrors'
                 # from the response
                 resp = safe_parse(resp)
                 if resp.parsed is not None:
                     parsed_resp = resp.parsed
                     messages = []
-                    if response_format == 'xml' and parsed_resp.find('./ValidationErrors') is not None:
+                    if response_format == 'xml' and\
+                            parsed_resp.find('./ValidationErrors') is not None:
                         messages = [e.find('./Message').text
                                     for e in parsed_resp.findall('./ValidationErrors/ValidationErrorDto')]
                     elif response_format == 'json' and 'ValidationErrors' in parsed_resp:
