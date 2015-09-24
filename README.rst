@@ -30,8 +30,8 @@ Or, if you have virtualenvwrapper installed::
     $ mkvirtualenv apiwrapper
     $ pip install apiwrapper
 
-Getting started 
----------------
+Getting started with a simple request
+-------------------------------------
 
 .. code:: python
     
@@ -52,7 +52,8 @@ Getting started
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=None)
 
-Advanced usage
----------------
+Advanced usage and polling
+--------------------------
 
-Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html
+Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html 
+Or use `apiwrapper/apiwrapper.py` as a reference. Implementation is straightforward.
