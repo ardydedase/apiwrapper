@@ -55,5 +55,6 @@ Getting started with a simple request
 Advanced usage and polling
 --------------------------
 
-Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html 
+Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html
+
 Or use `apiwrapper/apiwrapper.py` as a reference. Implementation is straightforward.
