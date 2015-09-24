@@ -26,6 +26,34 @@ Use it as a parent class::
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=None).parsed
 
+Parameter reference for `make_request()`::
+
+    def make_request(self, url, method='get', headers=None, data=None,
+                     callback=None, errors=STRICT, verify=False, **params):
+        """
+        Reusable method for performing requests.
+        :param url - URL to request
+        :param method - request method, default is 'get'
+        :param headers - request headers
+        :param data - post data
+        :param callback - callback to be applied to response,
+                          default callback will parse response as json object.
+        :param errors - specifies communication errors handling mode, possible
+                        values are:
+                         * strict (default) - throw an error as soon as one
+                            occurred
+                         * graceful - ignore certain errors, e.g. EmptyResponse
+                         * ignore - ignore all errors and return a result in
+                                    any case.
+                                    NOTE that it DOES NOT mean that no
+                                    exceptions can be
+                                    raised from this method, it mostly ignores
+                                    communication
+                                    related errors.
+                         * None or empty string equals to default
+        :param params - additional query parameters for request
+        """    
+
 Polling
 ~~~~~~~
 
@@ -155,6 +183,19 @@ Now that the `Flights` class is ready. The `get_result` method can be called as 
             inbounddate=inbound_date,
             adults=1).parsed
 
+Parameter reference for `poll()`::
+
+    def poll(self, url, initial_delay=2, delay=1, tries=20, errors=STRICT, is_complete_callback=None, **params):
+        """
+        Poll the URL
+        :param url - URL to poll, should be returned by 'create_session' call
+        :param initial_delay - specifies how many seconds to wait before the first poll
+        :param delay - specifies how many seconds to wait between the polls
+        :param tries - number of polls to perform
+        :param errors - errors handling mode, see corresponding parameter in 'make_request' method
+        :param params - additional query params for each poll request
+        """
+
 Response callbacks
 ~~~~~~~~~~~~~~~~~~
 
@@ -174,4 +215,5 @@ Response callbacks
             """
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=self._my_callback)
-            
+
+
