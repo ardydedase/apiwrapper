@@ -2,7 +2,7 @@
 API Wrapper
 =================================
 
-.. image:: https://img.shields.io/travis/ardydedase/apiwrapper.svg
+.. image:: https://api.travis-ci.org/ardydedase/apiwrapper.svg
         :target: https://travis-ci.org/ardydedase/apiwrapper
 
 .. image:: https://img.shields.io/pypi/v/apiwrapper.svg
