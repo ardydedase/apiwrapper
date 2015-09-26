@@ -8,6 +8,14 @@ API Wrapper
 .. image:: https://img.shields.io/pypi/v/apiwrapper.svg
         :target: https://pypi.python.org/pypi/apiwrapper
 
+.. image:: https://readthedocs.org/projects/apiwrapper/badge/?version=latest
+        :target: https://readthedocs.org/projects/apiwrapper/?badge=latest
+        :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/dm/apiwrapper.svg
+        :target: https://pypi.python.org/pypi/apiwrapper
+        :alt: Number of PyPI downloads
+
 Simple API Wrapper
 
 * Free software: BSD license
@@ -52,8 +60,8 @@ Getting started with a simple request
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=None)
 
-Advanced usage and polling
---------------------------
+More features including polling
+-------------------------------
 
 Read the docs: https://apiwrapper.readthedocs.org/en/latest/usage.html
 
