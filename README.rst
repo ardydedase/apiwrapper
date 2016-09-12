@@ -12,10 +12,6 @@ API Wrapper
         :target: https://readthedocs.org/projects/apiwrapper/?badge=latest
         :alt: Documentation Status
 
-.. image:: https://img.shields.io/pypi/dm/apiwrapper.svg
-        :target: https://pypi.python.org/pypi/apiwrapper
-        :alt: Number of PyPI downloads
-
 Simple API Wrapper
 
 * Free software: BSD license
