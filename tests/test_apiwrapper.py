@@ -40,7 +40,7 @@ class Flights(APIWrapper):
 
     def make_request(self, url, method='get', headers=None,
                      data=None, callback=None, errors=STRICT,
-                     verify=False, **params):
+                     verify=False, timeout=None, **params):
         """
         Call the `make_request` method from apiwrapper.
         So we can inject the apikey when it's not available.

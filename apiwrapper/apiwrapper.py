@@ -87,7 +87,7 @@ class APIWrapper(object):
         return parsed_resp
 
     def make_request(self, url, method='get', headers=None, data=None,
-                     callback=None, errors=STRICT, verify=False, **params):
+                     callback=None, errors=STRICT, verify=False, timeout=None, **params):
         """
         Reusable method for performing requests.
         :param url - URL to request
@@ -109,6 +109,8 @@ class APIWrapper(object):
                                     communication
                                     related errors.
                          * None or empty string equals to default
+        :param verify - whether or not to verify SSL cert, default to False
+        :param timeout - the timeout of the request in second, default to None
         :param params - additional query parameters for request
         """
         error_modes = (STRICT, GRACEFUL, IGNORE)
@@ -126,9 +128,10 @@ class APIWrapper(object):
         log.debug('* Request method: %s' % method)
         log.debug('* Request query params: %s' % params)
         log.debug('* Request headers: %s' % headers)
+        log.debug('* Request timeout: %s' % timeout)
 
         r = request(
-            url, headers=headers, data=data, verify=verify, params=params)
+            url, headers=headers, data=data, verify=verify, timeout=timeout, params=params)
 
         log.debug('* r.url: %s' % r.url)
 
