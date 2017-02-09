@@ -26,7 +26,7 @@ test_requirements = [
 
 setup(
     name='apiwrapper',
-    version='0.1.7',
+    version='0.1.8',
     description="Simple API Wrapper",
     long_description=readme + '\n\n' + history,
     author="Ardy Dedase",

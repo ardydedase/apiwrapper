@@ -17,11 +17,11 @@ Use it as a helper::
     print(resp)
 
 Use it as a parent class::
-    
+
     class GithubAPI(APIWrapper):
         def get_repos(self, username):
             """
-            Uses 'make_request' method              
+            Uses 'make_request' method
             """
             url = "https://api.github.com/users/{username}/repos".format(username=username)
             return self.make_request(url, method='get', headers=None, data=None, callback=None).parsed
@@ -51,8 +51,10 @@ Parameter reference for `make_request()`::
                                     communication
                                     related errors.
                          * None or empty string equals to default
+        :param verify - whether or not to verify SSL cert, default to False
+        :param timeout - the timeout of the request in second, default to None
         :param params - additional query parameters for request
-        """    
+        """
 
 Polling
 ~~~~~~~
@@ -61,19 +63,19 @@ APIWrapper's built-in polling method makes it convenient to declare polling meth
 
 In this `poll` method example, let's use Skyscanner's API.
 
-Let's start by importing `APIWrapper` class and all the error modes 
+Let's start by importing `APIWrapper` class and all the error modes
 available in the apiwrapper package::
-    
+
     from apiwrapper import (
         APIWrapper,
         STRICT,
         GRACEFUL,
         IGNORE)
 
-Next will be to declare the `Flights` class that will inherit 
-our `APIWrapper` parent class. 
+Next will be to declare the `Flights` class that will inherit
+our `APIWrapper` parent class.
 The parent APIWrapper class is initizialized with `response_format='json'`.
-The `api_key` is a private property so we don't have to pass 
+The `api_key` is a private property so we don't have to pass
 it as an argument every time we call `make_request`::
 
     class Flights(APIWrapper):
@@ -125,7 +127,7 @@ The `create_session` method prepares the API's polling session and returns the p
                                      'location'],
                                  data=params)
 
-This boolean method `is_poll_complete_callback` will be passed as a callback parameter in the `APIWrapper.poll` method call. 
+This boolean method `is_poll_complete_callback` will be passed as a callback parameter in the `APIWrapper.poll` method call.
 `is_poll_complete_callback` will receive the `poll` response from `poll` method as a parameter.
 This method will then use the `poll_resp` value to check whether the polling is complete or not and returns a boolean::
 
@@ -147,7 +149,7 @@ This method will then use the `poll_resp` value to check whether the polling is 
             raise RuntimeError('Unable to get poll response status.')
         return status in success_list
 
-And lastly, the `get_result` method polls the API using the URL that was returned from `create_session`. 
+And lastly, the `get_result` method polls the API using the URL that was returned from `create_session`.
 Notice that we are passing `_is_poll_complete_callback` as an argument to the `is_poll_complete_callback` parameter in the `poll` method. After the poll is complete, the `get_result` method will return the flight search result::
 
     def get_result(self, errors=STRICT, **params):
@@ -160,7 +162,7 @@ Notice that we are passing `_is_poll_complete_callback` as an argument to the `i
 
 
 Now that the `Flights` class is ready. The `get_result` method can be called as follows:
-    
+
 .. code:: python
 
         from datetime import datetime, timedelta
@@ -208,7 +210,7 @@ Response callbacks
             """
             return resp.json()
 
-                
+
         def get_repos(self, username):
             """
             Uses 'make_request' method
